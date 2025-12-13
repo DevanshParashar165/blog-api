@@ -1,0 +1,51 @@
+{
+  "name": "blog-api",
+  "version": "1.0.0",
+  "description": "Production-ready RESTful API for managing blog posts and comments with JWT-based authentication, role-based authorization, MongoDB integration, Swagger documentation, and comprehensive unit and integration testing.",
+  "main": "src/server.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevanshParashar165/blog-api.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "rest-api",
+    "backend",
+    "mongodb",
+    "jwt",
+    "swagger",
+    "jest",
+    "api-testing"
+  ],
+  "author": "Devansh Parashar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevanshParashar165/blog-api/issues"
+  },
+  "homepage": "https://github.com/DevanshParashar165/blog-api#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.20.2",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4",
+    "supertest": "^7.1.4",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  }
+}
