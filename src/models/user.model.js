@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 // User database Schema
 
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
 
 // Function to save encrypted password in database
 
-UserSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 10);
   next();
@@ -41,13 +41,13 @@ UserSchema.pre("save", async function (next) {
 
 // Function to check if the password is correct
 
-UserSchema.method.isPasswordCorrect = async function (password) {
+userSchema.method.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
 // Function to generate access token
 
-UserSchema.method.generateAccessToken = function () {
+userSchema.method.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,

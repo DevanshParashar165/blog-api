@@ -1,6 +1,8 @@
-import { User } from "../models/user.model";
-import { ApiResponse } from "../utils/ApiResponse";
+import { User } from "../models/user.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
+
+// Function to generate refresh and access token
 const generateRefreshAndAccessToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -21,6 +23,7 @@ const generateRefreshAndAccessToken = async (userId) => {
   }
 };
 
+// Function for user registration
 const registerUser = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
@@ -49,7 +52,16 @@ const registerUser = async (req, res) => {
         new ApiResponse(500, {}, "Something went wrong while registering user")
       );
     }
-    return res.json(
+
+    const options = {
+        httpOnly : true,
+        secure : true,
+        sameSite : "None"
+    }
+
+    return res
+    .cookie("accessToken",accessToken,options)
+    .json(
       new ApiResponse(
         201,
         { user, accessToken, refreshToken },
@@ -61,6 +73,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+//Fuction to login user
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -86,7 +99,15 @@ const loginUser = async (req, res) => {
       "-password -refreshToken"
     );
 
-    return res.json(
+    const options = {
+        httpOnly : true,
+        secure : true,
+        sameSite : "None"
+    }
+
+    return res
+    .cookie("accessToken",accessToken,options)
+    .json(
       new ApiResponse(
         200,
         {
@@ -102,5 +123,30 @@ const loginUser = async (req, res) => {
   }
 };
 
+const logout = async (req,res) =>{
+  await User.findByIdAndUpdate(req.user._id,{
+        $unset : {refreshToken : 1}//this removes the fields from document
+    })
 
-export { registerUser, loginUser };
+    const options = {
+        httpOnly : true,
+        secure : true,
+        sameSite : "None",
+        path : "/"
+    }
+    return res.status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .clearCookie("username")
+    .json(
+        new ApiResponse(200,{},"User logged Out")
+    )
+}
+
+// Fetch User details
+const getUserDetails = async(req,res)=>{
+    return res.status(200).json(new ApiResponse (200,req.user,"Current User fetched Successfully!!!"))
+}
+
+
+export { registerUser, loginUser,getUserDetails };
