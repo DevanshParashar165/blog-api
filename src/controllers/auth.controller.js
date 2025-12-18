@@ -13,6 +13,7 @@ const generateRefreshAndAccessToken = async (userId) => {
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
+    console.log(error.message)
     return res.json(
       new ApiResponse(
         500,
@@ -69,6 +70,7 @@ const registerUser = async (req, res) => {
       )
     );
   } catch (error) {
+    console.log(error.message)
     return res.json(400, {}, error.message);
   }
 };
@@ -124,23 +126,28 @@ const loginUser = async (req, res) => {
 };
 
 const logout = async (req,res) =>{
-  await User.findByIdAndUpdate(req.user._id,{
-        $unset : {refreshToken : 1}//this removes the fields from document
-    })
-
-    const options = {
-        httpOnly : true,
-        secure : true,
-        sameSite : "None",
-        path : "/"
-    }
-    return res.status(200)
-    .clearCookie("accessToken",options)
-    .clearCookie("refreshToken",options)
-    .clearCookie("username")
-    .json(
-        new ApiResponse(200,{},"User logged Out")
-    )
+  try {
+    await User.findByIdAndUpdate(req.user._id,{
+          $unset : {refreshToken : 1}//this removes the fields from document
+      })
+  
+      const options = {
+          httpOnly : true,
+          secure : true,
+          sameSite : "None",
+          path : "/"
+      }
+      return res.status(200)
+      .clearCookie("accessToken",options)
+      .clearCookie("refreshToken",options)
+      .clearCookie("username")
+      .json(
+          new ApiResponse(200,{},"User logged Out")
+      )
+  } catch (error) {
+    console.log(error.message)
+    return res.json(400,{},"Something went wrong while logging out user")
+  }
 }
 
 // Fetch User details
@@ -149,4 +156,4 @@ const getUserDetails = async(req,res)=>{
 }
 
 
-export { registerUser, loginUser,getUserDetails };
+export { registerUser, loginUser,getUserDetails,logout };
