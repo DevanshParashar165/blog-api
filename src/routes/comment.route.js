@@ -1,17 +1,25 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createComment, deleteComment, readComments, readSingleComment, updateComment } from "../controllers/comment.controller.js";
+import { createComment, deleteComment, readComments, readSingleComment, updateComment,} from "../controllers/comment.controller.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { createCommentValidator, readCommentsValidator, commentIdParamValidator} from "../validators/comment.validator.js";
 
-const commentRouter = Router()
+const commentRouter = Router();
 
-commentRouter.use(verifyJWT)
+// protect all comment routes
+commentRouter.use(verifyJWT);
 
-commentRouter.route('/')
-             .post(createComment)
-             .get(readComments)
-commentRouter.route('/:id')
-             .get(readSingleComment)
-             .put(updateComment)
-             .delete(deleteComment)
+// Create comment
+commentRouter.post("/", validate(createCommentValidator), createComment);
 
-export default commentRouter             
+// Read comments (filtered by post_id)
+commentRouter.get("/", validate(readCommentsValidator), readComments);
+
+// Read / Update / Delete single comment
+commentRouter
+  .route("/:id")
+  .get(validate(commentIdParamValidator), readSingleComment)
+  .put(validate(commentIdParamValidator), updateComment)
+  .delete(validate(commentIdParamValidator), deleteComment);
+
+export default commentRouter;

@@ -2,30 +2,35 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-// User database Schema
-
 const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
       required: true,
+      trim: true,
     },
+
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: true,
       minlength: 6,
       select: false,
     },
+
     role: {
       type: String,
       enum: ["user", "admin", "moderator"],
       default: "user",
     },
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-    },
+
     refreshToken: {
       type: String,
     },
@@ -33,44 +38,39 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Function to save encrypted password in database
-
+// hash password
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Function to check if the password is correct
-
-userSchema.method.isPasswordCorrect = async function (password) {
+// compare password
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-// Function to generate access token
-
-userSchema.method.generateAccessToken = function () {
+// access token
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       username: this.username,
+      role: this.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: process.env.ACCESS_TOKEN_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
 };
 
-// Function to generate Refresh Token
-
-userSchema.method.generateRefreshToken = function () {
+// refresh token
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
-      email: this.email,
-      username: this.username,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {

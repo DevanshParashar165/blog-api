@@ -1,18 +1,23 @@
 import { Router } from "express";
 import { createPost, deletePost, readPost, readSinglePost, updatePost } from "../controllers/post.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { createPostValidator, postIdParamValidator, readPostsValidator } from "../validators/post.validator.js";
 
+const postRouter = Router();
 
-const postRouter = Router()
-// protect all routes
-postRouter.use(verifyJWT)
+// protect all post routes
+postRouter.use(verifyJWT);
 
-postRouter.route('/')
-            .post(createPost)
-            .get(readPost)
-postRouter.route('/:id')
-          .get(readSinglePost) 
-          .put(updatePost)
-          .delete(deletePost)                        
+// Create post & Read posts
+postRouter.route("/")
+  .post(validate(createPostValidator), createPost)
+  .get(validate(readPostsValidator), readPost);
 
-export default postRouter
+// Read / Update / Delete single post
+postRouter.route("/:id")
+  .get(validate(postIdParamValidator), readSinglePost)
+  .put(validate(postIdParamValidator), updatePost)
+  .delete(validate(postIdParamValidator), deletePost);
+
+export default postRouter;
