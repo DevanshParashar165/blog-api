@@ -7,5 +7,5 @@ const swaggerDocument = YAML.load(
 );
 
 export const setupSwagger = (app) => {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 };
