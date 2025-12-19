@@ -3,7 +3,7 @@ import YAML from "yamljs";
 import path from "path";
 
 const swaggerDocument = YAML.load(
-  path.resolve("docs/swagger.yaml")
+  path.join(process.cwd(), "docs", "swagger.yaml")
 );
 
 export const setupSwagger = (app) => {

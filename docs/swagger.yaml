@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:5000/api
+  - url: http://localhost:5000/api/v1
 
 components:
   securitySchemes:
@@ -19,7 +19,7 @@ security:
 
 paths:
 
-  /auth/register:
+  /user/register:
     post:
       tags: [Auth]
       summary: Register new user
@@ -41,7 +41,7 @@ paths:
         "201":
           description: User registered
 
-  /auth/login:
+  /user/login:
     post:
       tags: [Auth]
       summary: Login user
