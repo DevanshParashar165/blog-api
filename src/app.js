@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import userRouter from "./routes/auth.route.js"
 import postRouter from "./routes/post.route.js"
+import commentRouter from "./routes/comment.route.js"
 
 const app = express()
 app.use(cors({
@@ -17,5 +18,6 @@ app.use(cookieParser())
 
 app.use('/api/v1/user',userRouter)
 app.use('/api/v1/post',postRouter)
+app.use('/api/v1/comments',commentRouter)
 
 export {app}

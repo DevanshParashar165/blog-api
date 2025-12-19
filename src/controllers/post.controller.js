@@ -108,6 +108,8 @@ const updatePost = async (req, res) => {
   }
 };
 
+// Function to delete post
+
 const deletePost = async(req,res)=>{
     try {
       const {id} = req.params

@@ -7,10 +7,10 @@ const postRouter = Router()
 // protect all routes
 postRouter.use(verifyJWT)
 
-postRouter.route('/post')
+postRouter.route('/')
             .post(createPost)
             .get(readPost)
-postRouter.route('/post/:id')
+postRouter.route('/:id')
           .get(readSinglePost) 
           .put(updatePost)
           .delete(deletePost)                        

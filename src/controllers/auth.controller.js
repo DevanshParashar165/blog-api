@@ -27,8 +27,8 @@ const generateRefreshAndAccessToken = async (userId) => {
 // Function for user registration
 const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    const { username, email, password,role } = req.body;
+    if (!username || !email || !password||!role) {
       return res.json(new ApiResponse(404, {}, "User details not found"));
     }
     const existedUser = await User.findOne({
