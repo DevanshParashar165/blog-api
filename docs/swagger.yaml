@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: Blog API
+  description: REST API for blog posts, comments, and authentication
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/api
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User registered
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Login successful
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Get all posts
+      responses:
+        "200":
+          description: List of posts
+
+    post:
+      tags: [Posts]
+      summary: Create post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: [title, content]
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+      responses:
+        "201":
+          description: Post created
+
+  /posts/{id}:
+    get:
+      tags: [Posts]
+      summary: Get single post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post details
+
+    put:
+      tags: [Posts]
+      summary: Update post
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Post updated
+
+    delete:
+      tags: [Posts]
+      summary: Delete post
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Post deleted
+
+  /comments:
+    get:
+      tags: [Comments]
+      summary: Get comments by post
+      parameters:
+        - in: query
+          name: post_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments list
+
+    post:
+      tags: [Comments]
+      summary: Create comment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: [postId, content]
+              properties:
+                postId:
+                  type: string
+                content:
+                  type: string
+      responses:
+        "201":
+          description: Comment created
